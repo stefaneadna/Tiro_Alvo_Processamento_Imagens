@@ -1,11 +1,12 @@
+#Nome: Stefane Adna dos Santos
 
 import argparse
 import cv2
 import glob
 from pathlib import Path
 import os
-import random
-import numpy as np
+
+
 def open_img(path_img):
     dataset = []
     #carrega as imagens do diretorio
@@ -17,43 +18,35 @@ def open_img(path_img):
 
 
 def save_img(dataset):
-    #salva os contornos no diretorio diretorio
-    if Path('Questao01').is_dir():
+    #salva os contornos no diretorio
+    if Path('questao1').is_dir():
         for i in range(len(dataset)):
-            cv2.imwrite('Questao01/img'+ str(i)+ '.png', dataset[i])
+            cv2.imwrite('questao1/img'+ str(i+1)+ '.png', dataset[i])
     else:
-        os.mkdir('Questao01')
+        os.mkdir('questao1')
         for i in range(len(dataset)):
-            cv2.imwrite('Questao01/img' + str(i) + '.png', dataset[i])
-
+            cv2.imwrite('questao1/img' + str(i+1) + '.png', dataset[i])
 
 
 def segmentacao(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    #utiliza o canny para detectar as bordas das imagens
     bordas = cv2.Canny(img_gray, 70, 150)
-
-    objetos,_ = cv2.findContours(bordas.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
     img_bordas = bordas.copy()
-    cv2.drawContours(img_bordas , objetos, -1, (255, 0, 0), 3)
 
-    elementoEstruturante = cv2.getStructuringElement(
-        cv2.MORPH_ELLIPSE, (2,2)
-    )
-    img_segmentada= cv2.erode(
-        img_bordas , elementoEstruturante, iterations=2
-    )
+    #encontra os contornos
+    objetos,_ = cv2.findContours(img_bordas, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cv2.drawContours(img_bordas, objetos, -1, (255, 0, 0), 3)
 
-    # cv2.imshow("Resultado", img_bordas )
-    # cv2.imshow("Bordas", img_segmentada)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    elemento_estruturante = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2,2))
+    #realiza o processo de erosão pra remover as bordas indesejadas da imagem
+    img_segmentada= cv2.erode(img_bordas, elemento_estruturante , iterations=2)
 
     return img_segmentada
 
 def process(input_data):
     # função que deve executar fluxograma principal do processo
-    print("teste")
     dataset = open_img(input_data)
 
     dataset_img_segmentado = []
@@ -62,11 +55,6 @@ def process(input_data):
 
     save_img(dataset_img_segmentado)
 
-
-    # cv2.imshow("Imagem", dataset[5])
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    # aux_function_B()
 
 
 def main():
