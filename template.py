@@ -18,18 +18,17 @@ def open_img(path_img):
 
 def save_img(dataset):
     #salva os contornos no diretorio diretorio
-    if Path('teste').is_dir():
+    if Path('Questao01').is_dir():
         for i in range(len(dataset)):
-            cv2.imwrite('teste/img'+ str(i)+ '.png', dataset[i])
+            cv2.imwrite('Questao01/img'+ str(i)+ '.png', dataset[i])
     else:
-        os.mkdir('teste')
+        os.mkdir('Questao01')
         for i in range(len(dataset)):
-            cv2.imwrite('teste/img' + str(i) + '.png', dataset[i])
+            cv2.imwrite('Questao01/img' + str(i) + '.png', dataset[i])
 
 
 
-def segmentacao(dataset):
-    img = dataset[0]
+def segmentacao(img):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     bordas = cv2.Canny(img_gray, 70, 150)
 
@@ -45,17 +44,24 @@ def segmentacao(dataset):
         img_bordas , elementoEstruturante, iterations=2
     )
 
-    cv2.imshow("Resultado", img_bordas )
-    cv2.imshow("Bordas", img_segmentada)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow("Resultado", img_bordas )
+    # cv2.imshow("Bordas", img_segmentada)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+    return img_segmentada
 
 def process(input_data):
     # função que deve executar fluxograma principal do processo
     print("teste")
     dataset = open_img(input_data)
-    segmentacao(dataset)
-    #save_img(dataset)
+
+    dataset_img_segmentado = []
+    for i in range(len(dataset)):
+        dataset_img_segmentado.append(segmentacao(dataset[i]))
+
+    save_img(dataset_img_segmentado)
+
 
     # cv2.imshow("Imagem", dataset[5])
     # cv2.waitKey(0)
